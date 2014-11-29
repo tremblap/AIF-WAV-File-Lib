@@ -15,6 +15,7 @@ int main(int argc, const char * argv[])
     FILE *inputfile = NULL;
     unsigned char WavHead[12];
     unsigned char WavFmt[24];
+    unsigned long datachunksize = 0L;
     
     for (n=0;n<argc;n++)
     {
@@ -40,24 +41,31 @@ int main(int argc, const char * argv[])
         return -1;
     }
     fread(WavHead, 1, 12, inputfile);
-    fread(WavFmt, 1, 24, inputfile);
+    
+    if (strncmp(WavHead, "RIFF", 4))
+    {
+        printf("NoRIFF\r");
+        fclose(inputfile);
+        return -2;
+    };
+ 
+    if (strncmp(WavHead+8, "WAVE", 4))
+    {
+        printf("NoWAVE\r");
+        fclose(inputfile);
+        return -2;
+    };
+
+    datachunksize = (unsigned long)WavHead[7]<<24 | (unsigned long)WavHead[6]<<16 | (unsigned long)WavHead[5]<<8 | (unsigned long)WavHead[4];
+    
+    datachunksize -= 36;
+    
+    printf("size of chunk b = %ld\r",datachunksize);
+
+//    fread(WavFmt, 1, 24, inputfile);
     
     //close the file
     fclose(inputfile);
-    
-    for (n=0; n<4; n++)
-        printf("%c", WavHead[n]);
-    printf("\n");
-    
-    for (n=8; n<12; n++)
-        printf("%c", WavHead[n]);
-    printf("\n");
-    
-    
-    for (n=0; n<4; n++)
-        printf("%c", WavFmt[n]);
-    printf("\n");
-  
     
     return 0;
 }
