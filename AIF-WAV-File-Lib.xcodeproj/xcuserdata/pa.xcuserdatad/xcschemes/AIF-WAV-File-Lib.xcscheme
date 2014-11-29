@@ -64,7 +64,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/pa/Desktop/bluesy.wav"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/projets/soprano+electro/performance_patch/Audio/combat-bd-Q.wav"
@@ -72,7 +72,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/projets/soprano+electro/performance_patch/Corrections/Corr-C.wav"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "11"

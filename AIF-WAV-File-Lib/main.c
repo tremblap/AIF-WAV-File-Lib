@@ -13,7 +13,7 @@ int main(int argc, const char * argv[])
 {
     unsigned int n, nbchan, sampdepth;
     FILE *inputfile = NULL;
-    unsigned char WavHead[12], WavFmt[32];
+    unsigned char WavHead[12], WavFmt[40], WavTemp[4];
     unsigned long datachunksize = 0L, SR;
     
     for (n=0;n<argc;n++)
@@ -60,7 +60,7 @@ int main(int argc, const char * argv[])
 
     // check the different parameters
     // imports the first chunk + the header of the 2nd
-    fread(WavFmt, 1, 32, inputfile);
+    fread(WavFmt, 1, 24, inputfile);
     
     //check proper header
     if (strncmp(WavFmt, "fmt ", 4))
@@ -77,7 +77,8 @@ int main(int argc, const char * argv[])
         if (WavFmt[8] == 1)
         {
             //safety check the datachunk
-            if (strncmp(WavFmt+24, "data", 4))
+            fread(WavTemp, 1, 4, inputfile);
+            if (strncmp(WavTemp, "data", 4))
             {
                 printf("Nodata\r");
                 fclose(inputfile);
@@ -88,13 +89,14 @@ int main(int argc, const char * argv[])
             nbchan = (unsigned int)WavFmt[11]<<8 | (unsigned int)WavFmt[10];
             SR =(unsigned long)WavFmt[15]<<24 | (unsigned long)WavFmt[14]<<16 | (unsigned long)WavFmt[13]<<8 | (unsigned long)WavFmt[12];
             sampdepth =(unsigned int)WavFmt[23]<<8 | (unsigned int)WavFmt[22];
-            datachunksize = (unsigned long)WavFmt[31]<<24 | (unsigned long)WavFmt[30]<<16 | (unsigned long)WavFmt[29]<<8 | (unsigned long)WavFmt[28];
+            fread(WavTemp, 1, 4, inputfile);
+            datachunksize = (unsigned long)WavTemp[3]<<24 | (unsigned long)WavTemp[2]<<16 | (unsigned long)WavTemp[1]<<8 | (unsigned long)WavTemp[0];
 
         }
         else if (WavFmt[8] == 3)
         {
             printf("thisisafloat\r");
-            printf("extchunksize = %d",((unsigned int)WavFmt[25]<<8 | (unsigned int)WavFmt[24]));
+            printf("extchunksize = %d\r",((unsigned int)WavFmt[25]<<8 | (unsigned int)WavFmt[24]));
         }
         else
         {
