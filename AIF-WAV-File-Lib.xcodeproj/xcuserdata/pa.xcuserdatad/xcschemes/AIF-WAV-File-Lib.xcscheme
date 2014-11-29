@@ -64,14 +64,14 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/pa/Desktop/bluesy.wav"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Volumes/machins/projets/soprano+electro/performance_patch/Audio/combat-bd-Q.wav"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/machins/projets/soprano+electro/performance_patch/Corrections/Corr-C.wav"
+            argument = "/Volumes/machins/--a&#x300;\ archiver/de&#x301;marche/soprano+electro/performance_patch/Audio/groove1-bd-Q.wav"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Volumes/machins/--a&#x300;\ archiver/de&#x301;marche/soprano+electro/performance_patch/Corrections/Corr-C.wav"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument

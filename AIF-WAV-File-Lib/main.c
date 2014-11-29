@@ -13,7 +13,7 @@ int main(int argc, const char * argv[])
 {
     unsigned int n, nbchan, sampdepth;
     FILE *inputfile = NULL;
-    unsigned char WavHead[12], WavFmt[40], WavTemp[4];
+    unsigned char WavHead[12], WavFmt[48], WavTemp[4];
     unsigned long datachunksize = 0L, SR;
     
     for (n=0;n<argc;n++)
@@ -70,22 +70,38 @@ int main(int argc, const char * argv[])
         return -3;
     };
     
+    n = (unsigned int)WavFmt[7]<<24 | (unsigned int)WavFmt[6]<<16 | (unsigned int)WavFmt[5]<<8 | (unsigned int)WavFmt[4];
+    
+//    printf("%d\r",n);
+    
+    // import the rest of the format chunk
+    if (n > 40)
+    {
+        printf("problem with extension size\r");
+        fclose(inputfile);
+        return -3;
+    }
+    else if (n != 16)
+    {
+        fread(WavFmt+24, 1, n-16, inputfile);
+    }
+    
     //check if PCM or float
     if (WavFmt[9]== 0)
     {
-        
+        // IF PCM
         if (WavFmt[8] == 1)
         {
             //safety check the datachunk
             fread(WavTemp, 1, 4, inputfile);
             if (strncmp(WavTemp, "data", 4))
             {
-                printf("Nodata\r");
+                printf("Not data\r");
                 fclose(inputfile);
-                return -3;
+                return -4;
             }
-            //transfer useful data from the chunk
             
+            //transfer useful data from the chunk
             nbchan = (unsigned int)WavFmt[11]<<8 | (unsigned int)WavFmt[10];
             SR =(unsigned long)WavFmt[15]<<24 | (unsigned long)WavFmt[14]<<16 | (unsigned long)WavFmt[13]<<8 | (unsigned long)WavFmt[12];
             sampdepth =(unsigned int)WavFmt[23]<<8 | (unsigned int)WavFmt[22];
@@ -93,10 +109,37 @@ int main(int argc, const char * argv[])
             datachunksize = (unsigned long)WavTemp[3]<<24 | (unsigned long)WavTemp[2]<<16 | (unsigned long)WavTemp[1]<<8 | (unsigned long)WavTemp[0];
 
         }
+        // IF FLOAT
         else if (WavFmt[8] == 3)
         {
-            printf("thisisafloat\r");
-            printf("extchunksize = %d\r",((unsigned int)WavFmt[25]<<8 | (unsigned int)WavFmt[24]));
+            //check next chunk and dismisses
+            fread(WavTemp, 1, 4, inputfile);
+            
+            //check for fact chunk
+            if (strncmp(WavTemp, "fact", 4) == 0)
+            {
+                printf("fact chunk dismissed\r");
+                fread(WavTemp, 1, 4, inputfile);
+                n = (unsigned long)WavTemp[3]<<24 | (unsigned long)WavTemp[2]<<16 | (unsigned long)WavTemp[1]<<8 | (unsigned long)WavTemp[0];
+                for (;n>=0;n-=4)
+                    fread(WavTemp, 1, 4, inputfile);
+            }
+            
+            // check for data chunk
+            if (strncmp(WavTemp, "data", 4))
+            {
+                printf("Not data\r");
+                fclose(inputfile);
+                return -5;
+            }
+
+            //transfer useful data from the chunk
+            nbchan = (unsigned int)WavFmt[11]<<8 | (unsigned int)WavFmt[10];
+            SR =(unsigned long)WavFmt[15]<<24 | (unsigned long)WavFmt[14]<<16 | (unsigned long)WavFmt[13]<<8 | (unsigned long)WavFmt[12];
+            sampdepth =(unsigned int)WavFmt[23]<<8 | (unsigned int)WavFmt[22];
+            fread(WavTemp, 1, 4, inputfile);
+            datachunksize = (unsigned long)WavTemp[3]<<24 | (unsigned long)WavTemp[2]<<16 | (unsigned long)WavTemp[1]<<8 | (unsigned long)WavTemp[0];
+
         }
         else
         {
