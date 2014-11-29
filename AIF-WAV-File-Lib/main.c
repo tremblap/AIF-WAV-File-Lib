@@ -44,7 +44,28 @@ int main(int argc, const char * argv[])
     // checks the file is a legit WAV
     fread(WavHead, 1, 12, inputfile);
 
-    if (strncmp(WavHead, "RIFF", 4))
+    if (strncmp(WavHead, "FORM", 4) == 0)
+    {
+        if (strncmp(WavHead+8, "AIFF", 4))
+        {
+            printf("this is an AIFF\r");
+            fclose(inputfile);
+            return 0;
+        }
+        else if (strncmp(WavHead+8, "AIFC", 4))
+        {
+            printf("this is an AIFC\r");
+            fclose(inputfile);
+            return 0;
+        }
+        else
+        {
+            printf("this is an unknown AIFx\r");
+            fclose(inputfile);
+            return 0;
+        };
+    }
+    else if (strncmp(WavHead, "RIFF", 4))
     {
         printf("NoRIFF\r");
         fclose(inputfile);
