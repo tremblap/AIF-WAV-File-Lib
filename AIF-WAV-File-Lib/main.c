@@ -10,9 +10,9 @@
 
 int main(int argc, const char * argv[])
 {
-
-    // insert code here...
-    printf("Hello, World!\n");
+    int n;
+    for (n=0;n<argc;n++)
+        printf("argc %d is %s\r", n, argv[n]);
     return 0;
 }
 
