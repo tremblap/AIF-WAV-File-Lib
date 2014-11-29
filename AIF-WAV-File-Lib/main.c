@@ -14,22 +14,22 @@
 int main(int argc, const char * argv[])
 {
     long i;
-    unsigned int nbchan, sampdepth;
+    unsigned int nbchan, sampdepth, AIFCflag;
     FILE *inputfile = NULL;
     unsigned char FileHead[12], WavFmt[48], WavTemp[8], *aChunk;
     unsigned long datachunksize = 0L, n;
     double SR;
     
-//    n = 0;
-//    if (strcmp (argv[0],"-header") == 0)
-//        {
-//            printf("manual header munging\r");
-//            SR = atof(argv[1]);
-//            nbchan = atoi(argv[2]);
-//            sampdepth = atoi(argv[3]);
-//            n = 4;
-//        }
-
+    //    n = 0;
+    //    if (strcmp (argv[0],"-header") == 0)
+    //        {
+    //            printf("manual header munging\r");
+    //            SR = atof(argv[1]);
+    //            nbchan = atoi(argv[2]);
+    //            sampdepth = atoi(argv[3]);
+    //            n = 4;
+    //        }
+    
     inputfile = fopen(argv[1], "r");
     
     if (inputfile == NULL)
@@ -41,49 +41,63 @@ int main(int argc, const char * argv[])
     
     // checks the file is a legit AIFF or WAV by importing the header
     fread(FileHead, 1, 12, inputfile);
-
+    
     //selects aiff or aifc
     if (strncmp((char *)FileHead, "FORM", 4) == 0)
     {
-        if (strncmp((char *)FileHead+8, "AIFC", 4) == 0)
+        //check if 'only' an AIFF
+        if (strncmp((char *)FileHead+8, "AIFF", 4) == 0)
+            AIFCflag = 0;
+        else if (strncmp((char *)FileHead+8, "AIFC", 4) == 0)
+            AIFCflag = 1;
+        else
         {
-            //check for the different headers and size
-            while(fread(WavTemp, 1, 8, inputfile))
+            printf("this is an unknown AIFx\r");
+            fclose(inputfile);
+            return 0;
+        }
+        printf("AIFCflag = %d\r",AIFCflag);
+        
+        //check for the different headers and size
+        while(fread(WavTemp, 1, 8, inputfile))
+        {
+            n = (unsigned long)WavTemp[4]<<24 | (unsigned long)WavTemp[5]<<16 | (unsigned long)WavTemp[6]<<8 | (unsigned long)WavTemp[7];
+            //the version header
+            if (strncmp((char *)WavTemp, "FVER", 4) == 0)
             {
-                n = (unsigned long)WavTemp[4]<<24 | (unsigned long)WavTemp[5]<<16 | (unsigned long)WavTemp[6]<<8 | (unsigned long)WavTemp[7];
-                //the version header
-                if (strncmp((char *)WavTemp, "FVER", 4) == 0)
+                aChunk = malloc(n);
+                fread(aChunk, 1, n, inputfile);
+                n = (unsigned long)aChunk[0]<<24 | (unsigned long)aChunk[1]<<16 | (unsigned long)aChunk[2]<<8 | (unsigned long)aChunk[3];
+                if (n != 0xA2805140)
                 {
-                    aChunk = malloc(n);
-                    fread(aChunk, 1, n, inputfile);
-                    n = (unsigned long)aChunk[0]<<24 | (unsigned long)aChunk[1]<<16 | (unsigned long)aChunk[2]<<8 | (unsigned long)aChunk[3];
-                    if (n != 0xA2805140)
-                    {
-                        printf("wrong version of AIFC\r");
-                        fclose(inputfile);
-                        free(aChunk);
-                        return 0;
-                    }
+                    printf("wrong version of AIFC\r");
+                    fclose(inputfile);
                     free(aChunk);
+                    return 0;
                 }
-                // the common header
-                else if (strncmp((char *)WavTemp, "COMM", 4) == 0)
+                free(aChunk);
+            }
+            // the common header
+            else if (strncmp((char *)WavTemp, "COMM", 4) == 0)
+            {
+                aChunk = malloc(n);
+                fread(aChunk, 1, n, inputfile);
+                
+                nbchan = (unsigned int)aChunk[0]<<8 | (unsigned int)aChunk[1];
+                sampdepth =(unsigned int)aChunk[6]<<8 | (unsigned int)aChunk[7];
+                datachunksize = ((unsigned long)aChunk[2]<<24 | (unsigned long)aChunk[3]<<16 | (unsigned long)aChunk[4]<<8 | (unsigned long)aChunk[5]) * nbchan * sampdepth / 8;
+               //type of compression accepted (none or float32)
+                // if aifc it can be float
+                if (AIFCflag)
                 {
-                    aChunk = malloc(n);
-                    fread(aChunk, 1, n, inputfile);
-                    
-                    nbchan = (unsigned int)aChunk[0]<<8 | (unsigned int)aChunk[1];
-                    datachunksize = ((unsigned long)aChunk[2]<<24 | (unsigned long)aChunk[3]<<16 | (unsigned long)aChunk[4]<<8 | (unsigned long)aChunk[5]) * nbchan;
-                    sampdepth =(unsigned int)aChunk[6]<<8 | (unsigned int)aChunk[7];
-                    //type of compression accepted (none or float32)
                     if (strncmp((char *)aChunk+18, "NONE", 4) == 0)
-                         {
-                             printf("INT\r");
-                         }
+                    {
+                        printf("INT\r");
+                    }
                     else if (strncmp((char *)aChunk+18, "FL32", 4) == 0)
-                         {
-                             printf("FLOAT\r");
-                         }
+                    {
+                        printf("FLOAT\r");
+                    }
                     else
                     {
                         printf("neither PCM-int or FL32 AIFC\r");
@@ -91,36 +105,25 @@ int main(int argc, const char * argv[])
                         free(aChunk);
                         return 0;
                     }
-                    
-                    // converts the sampling rate 80bit to double
-                    //    printf("size of SR = %ld\r", sizeof(&SR));
-                    SR = _af_convert_from_ieee_extended((unsigned char *)aChunk+8);
-                    
-                    free(aChunk);
                 }
-                else if (strncmp((char *)WavTemp, "SSND", 4) == 0)
-                {
-                    //stuff importing sounds
-                }
-                else
-                {
-                    //skip ahead in the file for the size of the chunk
-                }
+                // converts the sampling rate 80bit to double
+                //    printf("size of SR = %ld\r", sizeof(&SR));
+                // tried with http://blogs.perl.org/users/rurban/2012/09/reading-binary-floating-point-numbers-numbers-part2.html but was not working. Found the old apple conversion routine
+                SR = _af_convert_from_ieee_extended((unsigned char *)aChunk+8);
+                
+                free(aChunk);
             }
-            fclose(inputfile);
+            else if (strncmp((char *)WavTemp, "SSND", 4) == 0)
+            {
+                //stuff importing sounds
+            }
+            else
+            {
+                //skip ahead in the file for the size of the chunk
+            }
         }
-        else if (strncmp((char *)FileHead+8, "AIFF", 4) == 0)
-        {
-            printf("this is an AIFF\r");
-            fclose(inputfile);
-            return 0;
-        }
-        else
-        {
-            printf("this is an unknown AIFx\r");
-            fclose(inputfile);
-            return 0;
-        };
+        
+        fclose(inputfile);
     }
     // OR checks the file is a legit WAV and process
     else if (strncmp((char *)FileHead, "RIFF", 4) == 0)
@@ -236,12 +239,12 @@ int main(int argc, const char * argv[])
         fclose(inputfile);
         return -2;
     };
- 
-
+    
+    
     
     printf("SR = %lf samps/sec\rnbchan = %d\rsampdepth = %d bit per sample\r", SR, nbchan, sampdepth);
     printf("size of data chunk = %ld bytes of audio\r",datachunksize);
-
+    
     
     //close the file
     fclose(inputfile);
