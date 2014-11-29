@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "extended.h"
 
 int main(int argc, const char * argv[])
 {
@@ -37,6 +38,7 @@ int main(int argc, const char * argv[])
         return -1;
     }
     
+    
     // checks the file is a legit AIFF or WAV by importing the header
     fread(FileHead, 1, 12, inputfile);
 
@@ -49,6 +51,7 @@ int main(int argc, const char * argv[])
             while(fread(WavTemp, 1, 8, inputfile))
             {
                 n = (unsigned long)WavTemp[4]<<24 | (unsigned long)WavTemp[5]<<16 | (unsigned long)WavTemp[6]<<8 | (unsigned long)WavTemp[7];
+                //the version header
                 if (strncmp((char *)WavTemp, "FVER", 4) == 0)
                 {
                     aChunk = malloc(n);
@@ -63,6 +66,7 @@ int main(int argc, const char * argv[])
                     }
                     free(aChunk);
                 }
+                // the common header
                 else if (strncmp((char *)WavTemp, "COMM", 4) == 0)
                 {
                     aChunk = malloc(n);
@@ -71,6 +75,7 @@ int main(int argc, const char * argv[])
                     nbchan = (unsigned int)aChunk[0]<<8 | (unsigned int)aChunk[1];
                     datachunksize = ((unsigned long)aChunk[2]<<24 | (unsigned long)aChunk[3]<<16 | (unsigned long)aChunk[4]<<8 | (unsigned long)aChunk[5]) * nbchan;
                     sampdepth =(unsigned int)aChunk[6]<<8 | (unsigned int)aChunk[7];
+                    //type of compression accepted (none or float32)
                     if (strncmp((char *)aChunk+18, "NONE", 4) == 0)
                          {
                              printf("INT\r");
@@ -82,22 +87,26 @@ int main(int argc, const char * argv[])
                     else
                     {
                         printf("neither PCM-int or FL32 AIFC\r");
-//                        printf("%c%c%c%c\r", aChunk[18],aChunk[19],aChunk[20],aChunk[21]);
                         fclose(inputfile);
                         free(aChunk);
                         return 0;
                     }
-                    //SR =(unsigned long)WavFmt[2]<<24 | (unsigned long)WavFmt[14]<<16 | (unsigned long)WavFmt[13]<<8 | (unsigned long)WavFmt[12];
+                    
+                    // converts the sampling rate 80bit to double
+                    //    printf("size of SR = %ld\r", sizeof(&SR));
+                    SR = _af_convert_from_ieee_extended((unsigned char *)aChunk+8);
                     
                     free(aChunk);
                 }
-                else if (strncmp((char *)WavTemp, "CACA", 4) == 0)
+                else if (strncmp((char *)WavTemp, "SSND", 4) == 0)
                 {
-                    //stuff
+                    //stuff importing sounds
+                }
+                else
+                {
+                    //skip ahead in the file for the size of the chunk
                 }
             }
-            
-            
             fclose(inputfile);
         }
         else if (strncmp((char *)FileHead+8, "AIFF", 4) == 0)
@@ -230,7 +239,7 @@ int main(int argc, const char * argv[])
  
 
     
-    printf("SR = %f samps/sec\rnbchan = %d\rsampdepth = %d bit per sample\r", SR, nbchan, sampdepth);
+    printf("SR = %lf samps/sec\rnbchan = %d\rsampdepth = %d bit per sample\r", SR, nbchan, sampdepth);
     printf("size of data chunk = %ld bytes of audio\r",datachunksize);
 
     
@@ -239,4 +248,3 @@ int main(int argc, const char * argv[])
     
     return 0;
 }
-

@@ -83,6 +83,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "/Users/pa/Desktop/bluesywavGAIN"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "/Volumes/trucs/archive\ -\ pie&#x300;ces\ PA/-reflets/mastering5.1final/wtwtt-audio-5.1.aiff"
             isEnabled = "NO">
          </CommandLineArgument>

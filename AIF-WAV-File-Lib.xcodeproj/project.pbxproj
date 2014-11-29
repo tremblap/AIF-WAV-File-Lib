@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F690F8C1A2A84AC00F16E82 /* extended.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F690F8B1A2A84AC00F16E82 /* extended.c */; };
 		0F8531621A29F15D0027FE3B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F8531611A29F15D0027FE3B /* main.c */; };
 		0F8531641A29F15D0027FE3B /* AIF_WAV_File_Lib.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0F8531631A29F15D0027FE3B /* AIF_WAV_File_Lib.1 */; };
 /* End PBXBuildFile section */
@@ -25,6 +26,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F690F8B1A2A84AC00F16E82 /* extended.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = extended.c; sourceTree = "<group>"; };
+		0F690F8D1A2A85C100F16E82 /* extended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = extended.h; sourceTree = "<group>"; };
 		0F85315E1A29F15D0027FE3B /* AIF-WAV-File-Lib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "AIF-WAV-File-Lib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F8531611A29F15D0027FE3B /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		0F8531631A29F15D0027FE3B /* AIF_WAV_File_Lib.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = AIF_WAV_File_Lib.1; sourceTree = "<group>"; };
@@ -62,6 +65,8 @@
 			children = (
 				0F8531611A29F15D0027FE3B /* main.c */,
 				0F8531631A29F15D0027FE3B /* AIF_WAV_File_Lib.1 */,
+				0F690F8B1A2A84AC00F16E82 /* extended.c */,
+				0F690F8D1A2A85C100F16E82 /* extended.h */,
 			);
 			path = "AIF-WAV-File-Lib";
 			sourceTree = "<group>";
@@ -118,6 +123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F8531621A29F15D0027FE3B /* main.c in Sources */,
+				0F690F8C1A2A84AC00F16E82 /* extended.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,6 +233,7 @@
 				0F8531691A29F15D0027FE3B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
