@@ -11,11 +11,10 @@
 
 int main(int argc, const char * argv[])
 {
-    int n, SR, nbchan, samptype;
+    unsigned int n, nbchan, samptype;
     FILE *inputfile = NULL;
-    unsigned char WavHead[12];
-    unsigned char WavFmt[24];
-    unsigned long datachunksize = 0L;
+    unsigned char WavHead[12], WavFmt[32];
+    unsigned long datachunksize = 0L, SR;
     
     for (n=0;n<argc;n++)
     {
@@ -34,14 +33,17 @@ int main(int argc, const char * argv[])
             inputfile = fopen(argv[n], "r");
         }
     }
-    // printf("SR = %d\rnbchan = %d\rsamptype = %d\r", SR, nbchan, samptype);
+    
     if (inputfile == NULL)
     {
         printf("no file arg\r");
         return -1;
     }
-    fread(WavHead, 1, 12, inputfile);
+
     
+    // checks the file is a legit WAV
+    fread(WavHead, 1, 12, inputfile);
+
     if (strncmp(WavHead, "RIFF", 4))
     {
         printf("NoRIFF\r");
@@ -56,13 +58,45 @@ int main(int argc, const char * argv[])
         return -2;
     };
 
-    datachunksize = (unsigned long)WavHead[7]<<24 | (unsigned long)WavHead[6]<<16 | (unsigned long)WavHead[5]<<8 | (unsigned long)WavHead[4];
+    // check the different parameters
+    // imports the first chunk + the header of the 2nd
+    fread(WavFmt, 1, 32, inputfile);
     
-    datachunksize -= 36;
+    //check proper header
+    if (strncmp(WavFmt, "fmt ", 4))
+    {
+        printf("NoFMT\r");
+        fclose(inputfile);
+        return -3;
+    };
     
-    printf("size of chunk b = %ld\r",datachunksize);
+    //check if PCM
+    if (WavFmt[8]!= 1 | WavFmt[9]!= 0)
+    {
+        printf("NoPCM\r");
+        fclose(inputfile);
+        return -3;
+    };
 
-//    fread(WavFmt, 1, 24, inputfile);
+    //safety check the datachunk
+    if (strncmp(WavFmt+24, "data", 4))
+    {
+        printf("Nodata\r");
+        fclose(inputfile);
+        return -3;
+    };
+
+    //transfer useful data from the chunk
+    
+    nbchan = (unsigned int)WavFmt[11]<<8 | (unsigned int)WavFmt[10];
+    SR =(unsigned long)WavFmt[15]<<24 | (unsigned long)WavFmt[14]<<16 | (unsigned long)WavFmt[13]<<8 | (unsigned long)WavFmt[12];
+    samptype =(unsigned int)WavFmt[23]<<8 | (unsigned int)WavFmt[22];
+    datachunksize = (unsigned long)WavFmt[31]<<24 | (unsigned long)WavFmt[30]<<16 | (unsigned long)WavFmt[29]<<8 | (unsigned long)WavFmt[28];
+    
+    
+    printf("SR = %ld samps/sec\rnbchan = %d\rsamptype = %d bit per sample\r", SR, nbchan, samptype);
+    printf("size of data chunk = %ld bytes of audio\r",datachunksize);
+
     
     //close the file
     fclose(inputfile);
