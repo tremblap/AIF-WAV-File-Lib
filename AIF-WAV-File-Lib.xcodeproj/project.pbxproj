@@ -1,0 +1,234 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0F8531621A29F15D0027FE3B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F8531611A29F15D0027FE3B /* main.c */; };
+		0F8531641A29F15D0027FE3B /* AIF_WAV_File_Lib.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0F8531631A29F15D0027FE3B /* AIF_WAV_File_Lib.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0F85315C1A29F15D0027FE3B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				0F8531641A29F15D0027FE3B /* AIF_WAV_File_Lib.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0F85315E1A29F15D0027FE3B /* AIF-WAV-File-Lib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "AIF-WAV-File-Lib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F8531611A29F15D0027FE3B /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		0F8531631A29F15D0027FE3B /* AIF_WAV_File_Lib.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = AIF_WAV_File_Lib.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0F85315B1A29F15D0027FE3B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0F8531551A29F15D0027FE3B = {
+			isa = PBXGroup;
+			children = (
+				0F8531601A29F15D0027FE3B /* AIF-WAV-File-Lib */,
+				0F85315F1A29F15D0027FE3B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0F85315F1A29F15D0027FE3B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0F85315E1A29F15D0027FE3B /* AIF-WAV-File-Lib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0F8531601A29F15D0027FE3B /* AIF-WAV-File-Lib */ = {
+			isa = PBXGroup;
+			children = (
+				0F8531611A29F15D0027FE3B /* main.c */,
+				0F8531631A29F15D0027FE3B /* AIF_WAV_File_Lib.1 */,
+			);
+			path = "AIF-WAV-File-Lib";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0F85315D1A29F15D0027FE3B /* AIF-WAV-File-Lib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0F8531671A29F15D0027FE3B /* Build configuration list for PBXNativeTarget "AIF-WAV-File-Lib" */;
+			buildPhases = (
+				0F85315A1A29F15D0027FE3B /* Sources */,
+				0F85315B1A29F15D0027FE3B /* Frameworks */,
+				0F85315C1A29F15D0027FE3B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AIF-WAV-File-Lib";
+			productName = "AIF-WAV-File-Lib";
+			productReference = 0F85315E1A29F15D0027FE3B /* AIF-WAV-File-Lib */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0F8531561A29F15D0027FE3B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Pierre Alexandre Tremblay";
+			};
+			buildConfigurationList = 0F8531591A29F15D0027FE3B /* Build configuration list for PBXProject "AIF-WAV-File-Lib" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 0F8531551A29F15D0027FE3B;
+			productRefGroup = 0F85315F1A29F15D0027FE3B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0F85315D1A29F15D0027FE3B /* AIF-WAV-File-Lib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0F85315A1A29F15D0027FE3B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F8531621A29F15D0027FE3B /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0F8531651A29F15D0027FE3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		0F8531661A29F15D0027FE3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		0F8531681A29F15D0027FE3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0F8531691A29F15D0027FE3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0F8531591A29F15D0027FE3B /* Build configuration list for PBXProject "AIF-WAV-File-Lib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F8531651A29F15D0027FE3B /* Debug */,
+				0F8531661A29F15D0027FE3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0F8531671A29F15D0027FE3B /* Build configuration list for PBXNativeTarget "AIF-WAV-File-Lib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F8531681A29F15D0027FE3B /* Debug */,
+				0F8531691A29F15D0027FE3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0F8531561A29F15D0027FE3B /* Project object */;
+}
