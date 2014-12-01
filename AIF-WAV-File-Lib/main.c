@@ -55,7 +55,7 @@ int main(int argc, const char * argv[])
             //the version header
             if (strncmp((char *)WavTemp, "FVER", 4) == 0)
             {
-                printf("in FVER\r");
+//                printf("in FVER\r");
                 aChunk = malloc(n);
                 fread(aChunk, 1, n, inputfile);
                 n = (unsigned long)aChunk[0]<<24 | (unsigned long)aChunk[1]<<16 | (unsigned long)aChunk[2]<<8 | (unsigned long)aChunk[3];
@@ -71,8 +71,8 @@ int main(int argc, const char * argv[])
             // the common header
             else if (strncmp((char *)WavTemp, "COMM", 4) == 0)
             {
-                printf("in COMM\r");
-               aChunk = malloc(n);
+//                printf("in COMM\r");
+                aChunk = malloc(n);
                 fread(aChunk, 1, n, inputfile);
                 
                 nbchan = (unsigned int)aChunk[0]<<8 | (unsigned int)aChunk[1];
@@ -107,7 +107,7 @@ int main(int argc, const char * argv[])
             }
             else if (strncmp((char *)WavTemp, "SSND", 4) == 0)
             {
-                printf("in SSND\r");
+  //              printf("in SSND\r");
                 aChunk = malloc(n);
                 fread(aChunk, 1, n, inputfile);
                 //do something with these samples
@@ -116,11 +116,8 @@ int main(int argc, const char * argv[])
             else
                 // jumps the chunk
             {
-                printf("in %s\r",WavTemp);
-                aChunk = malloc(n);
-                fread(aChunk, 1, n, inputfile);
-                
-                free(aChunk);
+ //               printf("in %s\r",WavTemp);
+                fseek(inputfile, n, SEEK_CUR);
             }
         }
         
