@@ -14,11 +14,10 @@
 int main(int argc, const char * argv[])
 {
     long i;
-    unsigned int nbchan, sampdepth, AIFCflag;
-    FILE *inputfile = NULL;
-    unsigned char FileHead[12], WavFmt[48], WavTemp[8], *aChunk;
-    unsigned long datachunksize = 0L, n;
+    unsigned int nbchan, sampdepth, frames = 0, n;
+    unsigned char FileHead[12], WavFmt[48], WavTemp[8], *aChunk, AIFCflag;
     double SR;
+    FILE *inputfile = NULL;
     
     inputfile = fopen(argv[1], "r");
     
@@ -27,6 +26,7 @@ int main(int argc, const char * argv[])
         printf("no file arg\r");
         return -1;
     }
+    //sort AIF compression type to sowt (none is big-endian, sowt is little endian
     
     
     // checks the file is a legit AIFF or WAV by importing the header
@@ -51,14 +51,14 @@ int main(int argc, const char * argv[])
         //check for the different headers and size
         while(fread(WavTemp, 1, 8, inputfile))
         {
-            n = (unsigned long)WavTemp[4]<<24 | (unsigned long)WavTemp[5]<<16 | (unsigned long)WavTemp[6]<<8 | (unsigned long)WavTemp[7];
+            n = (unsigned int)WavTemp[4]<<24 | (unsigned int)WavTemp[5]<<16 | (unsigned int)WavTemp[6]<<8 | (unsigned int)WavTemp[7];
             //the version header
             if (strncmp((char *)WavTemp, "FVER", 4) == 0)
             {
 //                printf("in FVER\r");
                 aChunk = malloc(n);
                 fread(aChunk, 1, n, inputfile);
-                n = (unsigned long)aChunk[0]<<24 | (unsigned long)aChunk[1]<<16 | (unsigned long)aChunk[2]<<8 | (unsigned long)aChunk[3];
+                n = (unsigned int)aChunk[0]<<24 | (unsigned int)aChunk[1]<<16 | (unsigned int)aChunk[2]<<8 | (unsigned int)aChunk[3];
                 if (n != 0xA2805140)
                 {
                     printf("wrong version of AIFC\r");
@@ -77,7 +77,7 @@ int main(int argc, const char * argv[])
                 
                 nbchan = (unsigned int)aChunk[0]<<8 | (unsigned int)aChunk[1];
                 sampdepth =(unsigned int)aChunk[6]<<8 | (unsigned int)aChunk[7];
-                datachunksize = ((unsigned long)aChunk[2]<<24 | (unsigned long)aChunk[3]<<16 | (unsigned long)aChunk[4]<<8 | (unsigned long)aChunk[5]) * nbchan * sampdepth / 8;
+                frames = (unsigned int)aChunk[2]<<24 | (unsigned int)aChunk[3]<<16 | (unsigned int)aChunk[4]<<8 | (unsigned int)aChunk[5];
                //type of compression accepted (none or float32)
                 // if aifc it can be float
                 if (AIFCflag)
@@ -180,10 +180,10 @@ int main(int argc, const char * argv[])
                 
                 //transfer useful data from the chunk
                 nbchan = (unsigned int)WavFmt[11]<<8 | (unsigned int)WavFmt[10];
-                SR = (double)((unsigned long)WavFmt[15]<<24 | (unsigned long)WavFmt[14]<<16 | (unsigned long)WavFmt[13]<<8 | (unsigned long)WavFmt[12]);
+                SR = (double)((unsigned int)WavFmt[15]<<24 | (unsigned int)WavFmt[14]<<16 | (unsigned int)WavFmt[13]<<8 | (unsigned int)WavFmt[12]);
                 sampdepth =(unsigned int)WavFmt[23]<<8 | (unsigned int)WavFmt[22];
                 fread(WavTemp, 1, 4, inputfile);
-                datachunksize = (unsigned long)WavTemp[3]<<24 | (unsigned long)WavTemp[2]<<16 | (unsigned long)WavTemp[1]<<8 | (unsigned long)WavTemp[0];
+                frames = ((unsigned int)WavTemp[3]<<24 | (unsigned int)WavTemp[2]<<16 | (unsigned int)WavTemp[1]<<8 | (unsigned int)WavTemp[0]) * 8 / sampdepth / nbchan;
                 
             }
             // IF FLOAT
@@ -197,8 +197,8 @@ int main(int argc, const char * argv[])
                 {
                     printf("fact chunk dismissed\r");
                     fread(WavTemp, 1, 4, inputfile);
-                    n = (unsigned long)WavTemp[3]<<24 | (unsigned long)WavTemp[2]<<16 | (unsigned long)WavTemp[1]<<8 | (unsigned long)WavTemp[0];
-                    for (i = (long)n;i>=0;n-=4)
+                    n = (unsigned int)WavTemp[3]<<24 | (unsigned int)WavTemp[2]<<16 | (unsigned int)WavTemp[1]<<8 | (unsigned int)WavTemp[0];
+                    for (i = (long)n;i>=0;i-=4)
                         fread(WavTemp, 1, 4, inputfile);
                 }
                 
@@ -212,10 +212,10 @@ int main(int argc, const char * argv[])
                 
                 //transfer useful data from the chunk
                 nbchan = (unsigned int)WavFmt[11]<<8 | (unsigned int)WavFmt[10];
-                SR =(unsigned long)WavFmt[15]<<24 | (unsigned long)WavFmt[14]<<16 | (unsigned long)WavFmt[13]<<8 | (unsigned long)WavFmt[12];
+                SR =(unsigned int)WavFmt[15]<<24 | (unsigned int)WavFmt[14]<<16 | (unsigned int)WavFmt[13]<<8 | (unsigned int)WavFmt[12];
                 sampdepth =(unsigned int)WavFmt[23]<<8 | (unsigned int)WavFmt[22];
                 fread(WavTemp, 1, 4, inputfile);
-                datachunksize = (unsigned long)WavTemp[3]<<24 | (unsigned long)WavTemp[2]<<16 | (unsigned long)WavTemp[1]<<8 | (unsigned long)WavTemp[0];
+                frames = ((unsigned int)WavTemp[3]<<24 | (unsigned int)WavTemp[2]<<16 | (unsigned int)WavTemp[1]<<8 | (unsigned int)WavTemp[0]) * 8 / sampdepth / nbchan;
                 
             }
             else
@@ -243,7 +243,7 @@ int main(int argc, const char * argv[])
     
     
     printf("SR = %lf samps/sec\rnbchan = %d\rsampdepth = %d bit per sample\r", SR, nbchan, sampdepth);
-    printf("size of data chunk = %ld bytes of audio\r",datachunksize);
+    printf("nb of frames = %ld\r",frames);
     
     
     //close the file

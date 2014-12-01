@@ -84,7 +84,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/pa/Desktop/bluesywavGAIN.aiff"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/trucs/archive\ -\ pie&#x300;ces\ PA/-reflets/mastering5.1final/wtwtt-audio-5.1.aiff"
@@ -92,7 +92,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/trucs/archive\ -\ instruments\ PA/sandbox#3/patch-test/chroma-synthbass.aif"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "11"
