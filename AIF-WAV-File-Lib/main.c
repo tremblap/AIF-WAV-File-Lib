@@ -15,7 +15,7 @@ int main(int argc, const char * argv[])
 {
     long i;
     unsigned int nbchan, sampdepth, frames = 0, n;
-    unsigned char FileHead[12], WavFmt[48], WavTemp[8], *aChunk, AIFCflag;
+    unsigned char FileHead[12], WavTemp[8], *aChunk, AIFCflag;
     double SR;
     FILE *inputfile = NULL;
     
@@ -26,7 +26,8 @@ int main(int argc, const char * argv[])
         printf("no file arg\r");
         return -1;
     }
-    //sort AIF compression type to sowt (none is big-endian, sowt is little endian
+    //sort ENDIAN - AIF compression type to sowt (none is big-endian, sowt is little endian
+    //for WAV - if riff its little, if RIFX it is big
     
     
     // checks the file is a legit AIFF or WAV by importing the header
@@ -120,7 +121,13 @@ int main(int argc, const char * argv[])
                 fseek(inputfile, n, SEEK_CUR);
             }
         }
-        
+        if (!frames)
+        {
+            printf("no data\r");
+            fclose(inputfile);
+            return -5;
+        }
+
         fclose(inputfile);
     }
     // OR checks the file is a legit WAV and process
@@ -135,88 +142,43 @@ int main(int argc, const char * argv[])
         
         // check the different parameters
         // imports the first chunk + the header of the 2nd
-        fread(WavFmt, 1, 24, inputfile);
+        fread(WavTemp, 1, 8, inputfile);
         
         //check proper header
-        if (strncmp((char *)WavFmt, "fmt ", 4))
+        if (strncmp((char *)WavTemp, "fmt ", 4))
         {
             printf("NoFMT\r");
             fclose(inputfile);
             return -3;
         };
         
-        n = (unsigned int)WavFmt[7]<<24 | (unsigned int)WavFmt[6]<<16 | (unsigned int)WavFmt[5]<<8 | (unsigned int)WavFmt[4];
+        n = (unsigned int)WavTemp[7]<<24 | (unsigned int)WavTemp[6]<<16 | (unsigned int)WavTemp[5]<<8 | (unsigned int)WavTemp[4];
         
-        //    printf("%d\r",n);
+        printf("WaveFile\r");
         
         // import the rest of the format chunk
-        if (n > 40)
-        {
-            printf("problem with extension size\r");
-            fclose(inputfile);
-            return -3;
-        }
-        else if (n != 16)
-        {
-            fread(WavFmt+24, 1, n-16, inputfile);
-        }
-
-        printf("WaveFile\r");
-       
+        aChunk= malloc(n);
+        fread(aChunk, 1, n, inputfile);
+      
         //check if PCM or float
-        if (WavFmt[9]== 0)
+        if (aChunk[1]== 0)
         {
-            // IF PCM
-            if (WavFmt[8] == 1)
+            //safety check the datachunk
+            //transfer useful data from the chunk
+            nbchan = (unsigned int)aChunk[3]<<8 | (unsigned int)aChunk[2];
+            SR = (double)((unsigned int)aChunk[7]<<24 | (unsigned int)aChunk[6]<<16 | (unsigned int)aChunk[5]<<8 | (unsigned int)aChunk[4]);
+            sampdepth =(unsigned int)aChunk[15]<<8 | (unsigned int)aChunk[14];
+            free(aChunk);
+            
+            // IF PCM or FLOAT
+            if (aChunk[0] == 1)
             {
-                //safety check the datachunk
-                fread(WavTemp, 1, 4, inputfile);
-                if (strncmp((char *)WavTemp, "data", 4))
-                {
-                    printf("Not data\r");
-                    fclose(inputfile);
-                    return -4;
-                }
-                
-                //transfer useful data from the chunk
-                nbchan = (unsigned int)WavFmt[11]<<8 | (unsigned int)WavFmt[10];
-                SR = (double)((unsigned int)WavFmt[15]<<24 | (unsigned int)WavFmt[14]<<16 | (unsigned int)WavFmt[13]<<8 | (unsigned int)WavFmt[12]);
-                sampdepth =(unsigned int)WavFmt[23]<<8 | (unsigned int)WavFmt[22];
-                fread(WavTemp, 1, 4, inputfile);
-                frames = ((unsigned int)WavTemp[3]<<24 | (unsigned int)WavTemp[2]<<16 | (unsigned int)WavTemp[1]<<8 | (unsigned int)WavTemp[0]) * 8 / sampdepth / nbchan;
-                
+                printf("int\r");
             }
             // IF FLOAT
-            else if (WavFmt[8] == 3)
+            else if (aChunk[0] == 3)
             {
-                //check next chunk and dismisses
-                fread(WavTemp, 1, 4, inputfile);
-                
-                //check for fact chunk
-                if (strncmp((char *)WavTemp, "fact", 4) == 0)
-                {
-                    printf("fact chunk dismissed\r");
-                    fread(WavTemp, 1, 4, inputfile);
-                    n = (unsigned int)WavTemp[3]<<24 | (unsigned int)WavTemp[2]<<16 | (unsigned int)WavTemp[1]<<8 | (unsigned int)WavTemp[0];
-                    for (i = (long)n;i>=0;i-=4)
-                        fread(WavTemp, 1, 4, inputfile);
-                }
-                
-                // check for data chunk
-                if (strncmp((char *)WavTemp, "data", 4))
-                {
-                    printf("Not data\r");
-                    fclose(inputfile);
-                    return -5;
-                }
-                
-                //transfer useful data from the chunk
-                nbchan = (unsigned int)WavFmt[11]<<8 | (unsigned int)WavFmt[10];
-                SR =(unsigned int)WavFmt[15]<<24 | (unsigned int)WavFmt[14]<<16 | (unsigned int)WavFmt[13]<<8 | (unsigned int)WavFmt[12];
-                sampdepth =(unsigned int)WavFmt[23]<<8 | (unsigned int)WavFmt[22];
-                fread(WavTemp, 1, 4, inputfile);
-                frames = ((unsigned int)WavTemp[3]<<24 | (unsigned int)WavTemp[2]<<16 | (unsigned int)WavTemp[1]<<8 | (unsigned int)WavTemp[0]) * 8 / sampdepth / nbchan;
-                
+                printf("float\r");
             }
             else
             {
@@ -224,11 +186,43 @@ int main(int argc, const char * argv[])
                 fclose(inputfile);
                 return -3;
             }
+            
+            while(fread(WavTemp, 1, 8, inputfile))
+            {
+                n = (unsigned int)WavTemp[7]<<24 | (unsigned int)WavTemp[6]<<16 | (unsigned int)WavTemp[5]<<8 | (unsigned int)WavTemp[4];
+                //looking for the data header
+                if (strncmp((char *)WavTemp, "data", 4) == 0)
+                {
+//                    printf("in data\r");
+                    frames = ((unsigned int)WavTemp[7]<<24 | (unsigned int)WavTemp[6]<<16 | (unsigned int)WavTemp[5]<<8 | (unsigned int)WavTemp[4]) * 8 / sampdepth / nbchan;
+
+                    //transfer the data
+                    aChunk = malloc(n);
+                    // do something with the sounds here
+                    free(aChunk);
+                }
+                else
+                {
+//                    printf("in %s\r",WavTemp);
+                    fseek(inputfile, n, SEEK_CUR);
+                }
+                
+            }
+            fclose(inputfile);
+            
+            if (!frames)
+            {
+                printf("no data\r");
+                fclose(inputfile);
+                return -5;
+            }
+            
         }
         else
         {
             printf("NoPCM\r");
             fclose(inputfile);
+            free(aChunk);
             return -3;
         }
     }

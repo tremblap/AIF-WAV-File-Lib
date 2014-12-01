@@ -72,7 +72,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/--a&#x300;\ archiver/de&#x301;marche/soprano+electro/performance_patch/Corrections/Corr-C.wav"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/essai\ e&#x301;lectro/stereo\ tone"
@@ -92,7 +92,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/trucs/archive\ -\ instruments\ PA/sandbox#3/patch-test/chroma-synthbass.aif"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "11"
