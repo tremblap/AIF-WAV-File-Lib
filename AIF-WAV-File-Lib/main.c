@@ -20,16 +20,6 @@ int main(int argc, const char * argv[])
     unsigned long datachunksize = 0L, n;
     double SR;
     
-    //    n = 0;
-    //    if (strcmp (argv[0],"-header") == 0)
-    //        {
-    //            printf("manual header munging\r");
-    //            SR = atof(argv[1]);
-    //            nbchan = atoi(argv[2]);
-    //            sampdepth = atoi(argv[3]);
-    //            n = 4;
-    //        }
-    
     inputfile = fopen(argv[1], "r");
     
     if (inputfile == NULL)
@@ -65,6 +55,7 @@ int main(int argc, const char * argv[])
             //the version header
             if (strncmp((char *)WavTemp, "FVER", 4) == 0)
             {
+                printf("in FVER\r");
                 aChunk = malloc(n);
                 fread(aChunk, 1, n, inputfile);
                 n = (unsigned long)aChunk[0]<<24 | (unsigned long)aChunk[1]<<16 | (unsigned long)aChunk[2]<<8 | (unsigned long)aChunk[3];
@@ -80,7 +71,8 @@ int main(int argc, const char * argv[])
             // the common header
             else if (strncmp((char *)WavTemp, "COMM", 4) == 0)
             {
-                aChunk = malloc(n);
+                printf("in COMM\r");
+               aChunk = malloc(n);
                 fread(aChunk, 1, n, inputfile);
                 
                 nbchan = (unsigned int)aChunk[0]<<8 | (unsigned int)aChunk[1];
@@ -92,11 +84,11 @@ int main(int argc, const char * argv[])
                 {
                     if (strncmp((char *)aChunk+18, "NONE", 4) == 0)
                     {
-                        printf("INT\r");
+ //                       printf("INT\r");
                     }
                     else if (strncmp((char *)aChunk+18, "FL32", 4) == 0)
                     {
-                        printf("FLOAT\r");
+ //                       printf("FLOAT\r");
                     }
                     else
                     {
@@ -115,11 +107,20 @@ int main(int argc, const char * argv[])
             }
             else if (strncmp((char *)WavTemp, "SSND", 4) == 0)
             {
-                //stuff importing sounds
-            }
+                printf("in SSND\r");
+                aChunk = malloc(n);
+                fread(aChunk, 1, n, inputfile);
+                //do something with these samples
+                free(aChunk);
+          }
             else
+                // jumps the chunk
             {
-                //skip ahead in the file for the size of the chunk
+                printf("in %s\r",WavTemp);
+                aChunk = malloc(n);
+                fread(aChunk, 1, n, inputfile);
+                
+                free(aChunk);
             }
         }
         
@@ -162,7 +163,9 @@ int main(int argc, const char * argv[])
         {
             fread(WavFmt+24, 1, n-16, inputfile);
         }
-        
+
+        printf("WaveFile\r");
+       
         //check if PCM or float
         if (WavFmt[9]== 0)
         {
