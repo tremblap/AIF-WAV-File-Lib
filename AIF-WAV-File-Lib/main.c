@@ -34,7 +34,7 @@ int main(int argc, const char * argv[])
     
     //deal with negative indices as error
     
-    printf("SR = %lf samps/sec\rnbchan = %d\rdepth = %d byte per sample\r", SR, nbchan, depth);
+    printf("SR = %lf samps/sec\rnbchan = %d\rdepth = %d bytes per sample\risfloat = %d\r", SR, nbchan, depth, isfloat);
     printf("nb of frames = %u\r",frames);
     
     // read the file in a buffer
@@ -70,7 +70,6 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
             printf("this is an unknown AIFx\r");
             return -1;
         }
-        printf("AIFCflag = %d\r",AIFCflag);
         
         //check for the different headers and size
         while(fread(WavTemp, 1, 8, inputfile))
@@ -94,25 +93,22 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
             // the common header
             else if (strncmp((char *)WavTemp, "COMM", 4) == 0)
             {
-                //                printf("in COMM\r");
                 aChunk = malloc(n);
                 fread(aChunk, 1, n, inputfile);
                 
                 *nbchan = (unsigned int)aChunk[0]<<8 | (unsigned int)aChunk[1];
-                *depth =(unsigned int)aChunk[6]<<8 | (unsigned int)aChunk[7];
+                *depth = ((unsigned int)aChunk[6]<<8 | (unsigned int)aChunk[7]) / 8;
+                *isfloat = 0; // in case of AIFF
+
                 *frames = (unsigned int)aChunk[2]<<24 | (unsigned int)aChunk[3]<<16 | (unsigned int)aChunk[4]<<8 | (unsigned int)aChunk[5];
                 //type of compression accepted (none or float32)
                 // if aifc it can be float
                 if (AIFCflag)
                 {
                     if (strncmp((char *)aChunk+18, "NONE", 4) == 0)
-                    {
-                        //                       printf("INT\r");
-                    }
+                        *isfloat = 0;//could do nothing here
                     else if (strncmp((char *)aChunk+18, "FL32", 4) == 0)
-                    {
-                        //                       printf("FLOAT\r");
-                    }
+                        *isfloat = 1;
                     else
                     {
                         printf("neither PCM-int or FL32 AIFC\r");
@@ -120,8 +116,8 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
                         return -1;
                     }
                 }
+                
                 // converts the sampling rate 80bit to double
-                //    printf("size of SR = %ld\r", sizeof(&SR));
                 // tried with http://blogs.perl.org/users/rurban/2012/09/reading-binary-floating-point-numbers-numbers-part2.html but was not working. Found the old apple conversion routine
                 *SR = _af_convert_from_ieee_extended((unsigned char *)aChunk+8);
                 
@@ -184,19 +180,15 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
             //transfer useful data from the chunk
             *nbchan = (unsigned int)aChunk[3]<<8 | (unsigned int)aChunk[2];
             *SR = (double)((unsigned int)aChunk[7]<<24 | (unsigned int)aChunk[6]<<16 | (unsigned int)aChunk[5]<<8 | (unsigned int)aChunk[4]);
-            *depth =(unsigned int)aChunk[15]<<8 | (unsigned int)aChunk[14];
+            *depth = ((unsigned int)aChunk[15]<<8 | (unsigned int)aChunk[14]) / 8;
             free(aChunk);
             
             // IF PCM or FLOAT
             if (aChunk[0] == 1)
-            {
-                printf("int\r");
-            }
+                *isfloat = 0;
             // IF FLOAT
             else if (aChunk[0] == 3)
-            {
-                printf("float\r");
-            }
+                *isfloat = 1;
             else
             {
                 printf("NoINTofFLOAT\r");
@@ -209,8 +201,7 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
                 //looking for the data header
                 if (strncmp((char *)WavTemp, "data", 4) == 0)
                 {
-                    //                    printf("in data\r");
-                    *frames = ((unsigned int)WavTemp[7]<<24 | (unsigned int)WavTemp[6]<<16 | (unsigned int)WavTemp[5]<<8 | (unsigned int)WavTemp[4]) * 8 / *depth / *nbchan;
+                    *frames = ((unsigned int)WavTemp[7]<<24 | (unsigned int)WavTemp[6]<<16 | (unsigned int)WavTemp[5]<<8 | (unsigned int)WavTemp[4]) / *depth / *nbchan;
                     
                     //transfer the data
                     aChunk = malloc(n);
@@ -219,11 +210,7 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
                     return 1;
                 }
                 else
-                {
-                    //                    printf("in %s\r",WavTemp);
                     fseek(inputfile, n, SEEK_CUR);
-                }
-                
             }
             
             if (!frames)
@@ -241,10 +228,6 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
         }
     }
     // OR discarts
-    else
-    {
-        printf("Not a supported filetype\r");
-        return -1;
-    };
+    printf("Not a supported filetype\r");
     return -1;
 }
