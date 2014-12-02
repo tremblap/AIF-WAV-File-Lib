@@ -15,7 +15,7 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
 
 int main(int argc, const char * argv[])
 {
-    unsigned int nbchan, depth, frames, i, j;
+    unsigned int nbchan, depth, frames, i, j, k;
     float SR;
     long index;
     unsigned char isfloat, isbigendian;
@@ -48,43 +48,29 @@ int main(int argc, const char * argv[])
     // read the file in a buffer
     //allocate mem
     audioframes = calloc(depth, nbchan*frames);
-   //put the head at the right place
+    //put the head at the right place
     fseek(inputfile, index, SEEK_SET);
     // get the stuff the right way
     fread(audioframes, depth, (nbchan * frames), inputfile);
     //close the file
     fclose(inputfile);
-
+    
     // printing the first 20 frames for fun
     printf("index = %ld\r",index);
     printf("SR = %lf samps/sec\rnbchan = %d\rdepth = %d bytes per sample\risfloat = %d\risbigendian = %d\r", SR, nbchan, depth, isfloat, isbigendian);
     printf("nb of frames = %u\r",frames);
-
     
-    if (isfloat)
+    
+    for (i=0;i<10;i++)
     {
-        for (i=0;i<10;i++)
+        for (j=0;j<nbchan;j++)
         {
-            for (j=0;j<nbchan;j++)
-                printf("%10f\t",*((char *)audioframes + (((i*nbchan)+j)*depth)));
-//                printf("%10ld\t",audioframes + (i*nbchan)+j);
-            printf("\r");
-        }
-        
-    }
-    else
-    {
-        for (i=0;i<10;i++)
-        {
-            for (j=0;j<nbchan;j++)
+            for (k=0;k<depth;k++)
             {
-                //                printf("%10d\t",*((char *)audioframes+(((i*nbchan)+j)*depth)));
-                //                printf("%10ld\t",audioframes);
-                
+                printf("%4d\t",*((char *)audioframes+(((i*nbchan)+j)*depth)+k));
             }
-            printf("\r");
         }
-       
+        printf("\r");
     }
     
     return 0;
@@ -142,7 +128,7 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
                 *depth = ((unsigned int)aChunk[6]<<8 | (unsigned int)aChunk[7]) / 8;
                 *isfloat = 0; // in case of AIFF
                 *isbigendian = 1; // in case of AIFF
-
+                
                 *frames = (unsigned int)aChunk[2]<<24 | (unsigned int)aChunk[3]<<16 | (unsigned int)aChunk[4]<<8 | (unsigned int)aChunk[5];
                 //type of compression accepted (none or float32)
                 // if aifc it can be float
@@ -252,7 +238,7 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
                     *frames = ((unsigned int)WavTemp[7]<<24 | (unsigned int)WavTemp[6]<<16 | (unsigned int)WavTemp[5]<<8 | (unsigned int)WavTemp[4]) / *depth / *nbchan;
                     index = ftell(inputfile);// sets the index where the sound frames start
                     fseek(inputfile, n, SEEK_CUR);
-               }
+                }
                 else
                     fseek(inputfile, n, SEEK_CUR);
             }
@@ -277,5 +263,5 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
         printf("Not a supported filetype\r");
         return -1;
     }
-     return index;
+    return index;
 }
