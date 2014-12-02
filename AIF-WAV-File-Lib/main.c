@@ -66,27 +66,68 @@ int main(int argc, const char * argv[])
     printf("SR = %lf samps/sec\rnbchan = %d\rdepth = %d bytes per sample\risfloat = %d\risbigendian = %d\r", SR, nbchan, depth, isfloat, isbigendian);
     printf("nb of frames = %u\r",frames);
     
-    
-    for (i=0;i<10;i++)
+    //the big print function that works
+    if (isfloat)
     {
-        for (j=0;j<nbchan;j++)
+        if (isbigendian)
         {
-//            for (k=0;k<depth;k++)
-//            {
-//                printf("%4d\t",*((char *)audioframes+(((i*nbchan)+j)*depth)+k));
-//            }
-//            printf("%10f\t", *(float *)(audioframes+(((i*nbchan)+j)*depth)));
-//            u.long = 0;
-//            u.char[2] = *((char *)(audioframes+(((i*nbchan)+j)*depth)));
-//            u.char[3] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+1);
-            u.l = 0L;
-            u.c[3] = *((char *)(audioframes+(((i*nbchan)+j)*depth)));
-            u.c[2] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+1));
- //           u.c[1] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+2));
- //           u.c[0] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+3));
-            printf("%6d\t",u.l);
+            for (i=0;i<10;i++)
+            {
+                for (j=0;j<nbchan;j++)
+                {
+                    u.l = 0L;
+                    for (k=0;k<depth;k++)
+                        u.c[3-k] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+k));
+                    printf("%6f\t",u.f);
+                }
+                printf("\r");
+            }
         }
-        printf("\r");
+        else
+        {
+            for (i=0;i<10;i++)
+            {
+                for (j=0;j<nbchan;j++)
+                {
+                    u.l = 0L;
+                    for (k=0;k<depth;k++)
+                        u.c[k] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+k));
+                    printf("%6f\t",u.f);
+                }
+                printf("\r");
+            }
+        }
+    }
+    else
+    {
+        if(isbigendian)
+        {
+            for (i=0;i<10;i++)
+            {
+                for (j=0;j<nbchan;j++)
+                {
+                    u.l = 0L;
+                    for (k=0;k<depth;k++)
+                        u.c[3-k] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+k));
+                    printf("%6d\t",u.l);
+                }
+                printf("\r");
+            }
+        }
+        else
+        {
+            for (i=0;i<10;i++)
+            {
+                for (j=0;j<nbchan;j++)
+                {
+                    u.l = 0L;
+                    for (k=0;k<depth;k++)
+                        u.c[4 - depth + k] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+k));
+                    printf("%6d\t",u.l);
+                }
+                printf("\r");
+            }
+        }
     }
     
     return 0;
@@ -154,7 +195,7 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
                         *isfloat = 0;//could do nothing here but gotta keep the place neet.
                     else if (strncmp((char *)aChunk+18, "sowt", 4) == 0)
                         *isbigendian = 0;//the few little endian cases
-                    else if (strncmp((char *)aChunk+18, "fl32", 4) == 0)
+                    else if (strncmp((char *)aChunk+18, "fl32", 4) == 0 || strncmp((char *)aChunk+18, "FL32", 4) == 0)
                         *isfloat = 1;
                     else
                     {
