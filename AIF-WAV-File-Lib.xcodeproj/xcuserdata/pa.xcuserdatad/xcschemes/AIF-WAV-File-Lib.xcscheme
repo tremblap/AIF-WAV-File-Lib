@@ -68,7 +68,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/--a&#x300;\ archiver/de&#x301;marche/soprano+electro/performance_patch/Audio/groove1-bd-Q.wav"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/--a&#x300;\ archiver/de&#x301;marche/soprano+electro/performance_patch/Corrections/Corr-C.wav"
@@ -76,7 +76,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/essai\ e&#x301;lectro/stereo\ tone"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/pa/Desktop/stereonoise.aiff"

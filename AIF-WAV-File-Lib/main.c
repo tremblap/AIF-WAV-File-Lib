@@ -66,7 +66,7 @@ int main(int argc, const char * argv[])
         for (i=0;i<10;i++)
         {
             for (j=0;j<nbchan;j++)
-                printf("%10f\t",*((float *)audioframes + (i*nbchan)+j));
+                printf("%10f\t",*((char *)audioframes + (((i*nbchan)+j)*depth)));
 //                printf("%10ld\t",audioframes + (i*nbchan)+j);
             printf("\r");
         }
@@ -77,8 +77,11 @@ int main(int argc, const char * argv[])
         for (i=0;i<10;i++)
         {
             for (j=0;j<nbchan;j++)
-                printf("%10d\t",*((int *)audioframes+(i*nbchan)+j));
-//                printf("%10ld\t",audioframes);
+            {
+                //                printf("%10d\t",*((char *)audioframes+(((i*nbchan)+j)*depth)));
+                //                printf("%10ld\t",audioframes);
+                
+            }
             printf("\r");
         }
        
