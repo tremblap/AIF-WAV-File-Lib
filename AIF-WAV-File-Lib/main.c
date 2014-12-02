@@ -61,7 +61,7 @@ int main(int argc, const char * argv[])
     //close the file
     fclose(inputfile);
     
-    // printing the first 20 frames for fun
+    // printing the first 10 frames for fun
     printf("index = %ld\r",index);
     printf("SR = %lf samps/sec\rnbchan = %d\rdepth = %d bytes per sample\risfloat = %d\risbigendian = %d\r", SR, nbchan, depth, isfloat, isbigendian);
     printf("nb of frames = %u\r",frames);
@@ -213,7 +213,7 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
             }
             else if (strncmp((char *)WavTemp, "SSND", 4) == 0)
             {
-                index = ftell(inputfile);// pass the index where the audio frames start
+                index = ftell(inputfile) + 8;// pass the index where the audio frames start (offset of 8 because of unused (unsigned long)offset + blockSize)
                 fseek(inputfile, n, SEEK_CUR);
             }
             else
