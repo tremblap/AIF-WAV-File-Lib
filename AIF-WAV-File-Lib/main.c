@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include "extended.h"
 
+
 long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan, unsigned int *depth, unsigned char *isfloat, unsigned char *isbigendian, unsigned int *frames);
 
 int main(int argc, const char * argv[])
@@ -20,6 +21,12 @@ int main(int argc, const char * argv[])
     long index;
     unsigned char isfloat, isbigendian;
     void *audioframes;
+ 
+    union {
+        char c[4];
+        float f;
+        long l;
+    } u;
     
     FILE * inputfile = NULL;
     
@@ -68,7 +75,16 @@ int main(int argc, const char * argv[])
 //            {
 //                printf("%4d\t",*((char *)audioframes+(((i*nbchan)+j)*depth)+k));
 //            }
-            printf("%10f\t", *(float *)(audioframes+(((i*nbchan)+j)*depth)));
+//            printf("%10f\t", *(float *)(audioframes+(((i*nbchan)+j)*depth)));
+//            u.long = 0;
+//            u.char[2] = *((char *)(audioframes+(((i*nbchan)+j)*depth)));
+//            u.char[3] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+1);
+            u.l = 0L;
+            u.c[3] = *((char *)(audioframes+(((i*nbchan)+j)*depth)));
+            u.c[2] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+1));
+ //           u.c[1] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+2));
+ //           u.c[0] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+3));
+            printf("%6d\t",u.l);
         }
         printf("\r");
     }
