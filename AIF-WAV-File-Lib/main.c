@@ -21,7 +21,6 @@ int main(int argc, const char * argv[])
     unsigned char isfloat, isbigendian;
     void *audioframes;
     
-    
     FILE * inputfile = NULL;
     
     // tries to open the audiofile with ANSI-C routine
@@ -65,10 +64,11 @@ int main(int argc, const char * argv[])
     {
         for (j=0;j<nbchan;j++)
         {
-            for (k=0;k<depth;k++)
-            {
-                printf("%4d\t",*((char *)audioframes+(((i*nbchan)+j)*depth)+k));
-            }
+//            for (k=0;k<depth;k++)
+//            {
+//                printf("%4d\t",*((char *)audioframes+(((i*nbchan)+j)*depth)+k));
+//            }
+            printf("%10f\t", *(float *)(audioframes+(((i*nbchan)+j)*depth)));
         }
         printf("\r");
     }
@@ -138,7 +138,7 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
                         *isfloat = 0;//could do nothing here but gotta keep the place neet.
                     else if (strncmp((char *)aChunk+18, "sowt", 4) == 0)
                         *isbigendian = 0;//the few little endian cases
-                    else if (strncmp((char *)aChunk+18, "FL32", 4) == 0)
+                    else if (strncmp((char *)aChunk+18, "fl32", 4) == 0)
                         *isfloat = 1;
                     else
                     {
@@ -200,8 +200,6 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
         }
         
         n = (unsigned int)WavTemp[7]<<24 | (unsigned int)WavTemp[6]<<16 | (unsigned int)WavTemp[5]<<8 | (unsigned int)WavTemp[4];
-        
-        printf("WaveFile\r");
         
         // import the rest of the format chunk
         aChunk= malloc(n);
