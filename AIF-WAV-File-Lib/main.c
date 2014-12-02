@@ -15,13 +15,16 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
 
 int main(int argc, const char * argv[])
 {
-    unsigned int nbchan, depth, frames;
+    unsigned int nbchan, depth, frames, i, j;
     float SR;
     long index;
     unsigned char isfloat, isbigendian;
+    void *audioframes;
     
-    FILE *inputfile = NULL;
     
+    FILE * inputfile = NULL;
+    
+    // tries to open the audiofile with ANSI-C routine
     inputfile = fopen(argv[1], "r");
     
     if (inputfile == NULL)
@@ -30,19 +33,56 @@ int main(int argc, const char * argv[])
         return -1;
     }
     
+    // gather info from the header and generates an index where to start reading for frames, or an error if negative
     index = audiofile_header_extractor(inputfile,&SR,&nbchan,&depth,&isfloat,&isbigendian,&frames);
     
-    //deal with negative indices as error
-    
-    printf("index = %ld\r",index);
-    
-    printf("SR = %lf samps/sec\rnbchan = %d\rdepth = %d bytes per sample\risfloat = %d\risbigendian = %d\r", SR, nbchan, depth, isfloat, isbigendian);
-    printf("nb of frames = %u\r",frames);
+    // deal with errors (negative indices) the way you want but close the file
+    if (index < 0)
+    {
+        printf("error code %ld\r",index);
+        //close the file
+        fclose(inputfile);
+        return -1;
+    }
     
     // read the file in a buffer
-    
+    //allocate mem
+    audioframes = calloc(depth, nbchan*frames);
+   //put the head at the right place
+    fseek(inputfile, index, SEEK_SET);
+    // get the stuff the right way
+    fread(audioframes, depth, (nbchan * frames), inputfile);
     //close the file
     fclose(inputfile);
+
+    // printing the first 20 frames for fun
+    printf("index = %ld\r",index);
+    printf("SR = %lf samps/sec\rnbchan = %d\rdepth = %d bytes per sample\risfloat = %d\risbigendian = %d\r", SR, nbchan, depth, isfloat, isbigendian);
+    printf("nb of frames = %u\r",frames);
+
+    
+    if (isfloat)
+    {
+        for (i=0;i<10;i++)
+        {
+            for (j=0;j<nbchan;j++)
+                printf("%10f\t",*((float *)audioframes + (i*nbchan)+j));
+//                printf("%10ld\t",audioframes + (i*nbchan)+j);
+            printf("\r");
+        }
+        
+    }
+    else
+    {
+        for (i=0;i<10;i++)
+        {
+            for (j=0;j<nbchan;j++)
+                printf("%10d\t",*((int *)audioframes+(i*nbchan)+j));
+//                printf("%10ld\t",audioframes);
+            printf("\r");
+        }
+       
+    }
     
     return 0;
 }
@@ -143,13 +183,13 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
     // OR checks the file is a legit WAV and process
     else if (strncmp((char *)FileHead, "RIF", 3) == 0)
     {
-        if (FileHead[4] == 'F')
+        if (FileHead[3] == 'F')
             *isbigendian = 0;
-        else if (FileHead[4] == 'X')
+        else if (FileHead[3] == 'X')
             *isbigendian = 1;//the very rare RIFX files
         else
         {
-            printf("NoWAVE\r");
+            printf("NoWAVE-at-all\r");
             return -1;
         }
         

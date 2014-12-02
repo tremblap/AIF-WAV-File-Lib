@@ -76,7 +76,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/essai\ e&#x301;lectro/stereo\ tone"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/pa/Desktop/stereonoise.aiff"
@@ -84,7 +84,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/pa/Desktop/bluesywavGAIN.aiff"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/trucs/archive\ -\ pie&#x300;ces\ PA/-reflets/mastering5.1final/wtwtt-audio-5.1.aiff"
