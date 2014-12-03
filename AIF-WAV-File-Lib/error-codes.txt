@@ -1,0 +1,17 @@
+error codes
+
+AIF:
+-1: unknown AIFx format
+-2: wrong version of AIFC
+-3: neither PCM-int or FL32
+-4: no data in the AIFx
+
+WAV:
+-5: unknown RIFx format
+-6: not a WAV file
+-7: no format header
+-8: neither PCM-int or FL32
+-9: no data in the AIFx
+
+BOTH/NEITHER
+-10: not a WAV or AIF

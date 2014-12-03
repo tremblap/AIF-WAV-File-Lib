@@ -63,11 +63,19 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp.aif"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp8.aif"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp32.aif"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp16.aif"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp24.aif"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp32f.aif"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -79,11 +87,19 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp.wav"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp8.wav"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp16.wav"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp32.wav"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp24.wav"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp32f.wav"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

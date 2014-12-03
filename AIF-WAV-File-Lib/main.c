@@ -11,7 +11,6 @@
 #include <stdlib.h>
 #include "extended.h"
 
-
 long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan, unsigned int *depth, unsigned char *isfloat, unsigned char *isbigendian, unsigned int *frames);
 
 int main(int argc, const char * argv[])
@@ -21,11 +20,11 @@ int main(int argc, const char * argv[])
     long index;
     unsigned char isfloat, isbigendian;
     void *audioframes;
- 
+    
     union {
         char c[4];
         float f;
-        long l;
+        int l;
     } u;
     
     FILE * inputfile = NULL;
@@ -61,17 +60,17 @@ int main(int argc, const char * argv[])
     //close the file
     fclose(inputfile);
     
-    // printing the first 10 frames for fun
+    // printing the first NB2PRINT frames for fun
     printf("index = %ld\r",index);
     printf("SR = %lf samps/sec\rnbchan = %d\rdepth = %d bytes per sample\risfloat = %d\risbigendian = %d\r", SR, nbchan, depth, isfloat, isbigendian);
     printf("nb of frames = %u\r",frames);
     
-    //the big print function that works
+    //the big print function that works - just the simplest example of the use of this library
     if (isfloat)
     {
         if (isbigendian)
         {
-            for (i=0;i<10;i++)
+            for (i=0;i<frames;i++)
             {
                 for (j=0;j<nbchan;j++)
                 {
@@ -85,7 +84,7 @@ int main(int argc, const char * argv[])
         }
         else
         {
-            for (i=0;i<10;i++)
+            for (i=0;i<frames;i++)
             {
                 for (j=0;j<nbchan;j++)
                 {
@@ -102,13 +101,16 @@ int main(int argc, const char * argv[])
     {
         if(isbigendian)
         {
-            for (i=0;i<10;i++)
+            for (i=0;i<frames;i++)
             {
                 for (j=0;j<nbchan;j++)
                 {
                     u.l = 0L;
                     for (k=0;k<depth;k++)
-                        u.c[3-k] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+k));
+                        u.c[depth - 1 - k] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+k));
+                    if (u.c[depth -1] & 128)
+                        for (k=3;k>=depth;k--)
+                            u.c[k] |= 255;
                     printf("%6d\t",u.l);
                 }
                 printf("\r");
@@ -116,13 +118,16 @@ int main(int argc, const char * argv[])
         }
         else
         {
-            for (i=0;i<10;i++)
+            for (i=0;i<frames;i++)
             {
                 for (j=0;j<nbchan;j++)
                 {
                     u.l = 0L;
                     for (k=0;k<depth;k++)
-                        u.c[4 - depth + k] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+k));
+                        u.c[k] = *((char *)(audioframes+(((i*nbchan)+j)*depth)+k));
+                    if (u.c[depth -1] & 128)
+                        for (k=3;k>=depth;k--)
+                            u.c[k] |= 255;
                     printf("%6d\t",u.l);
                 }
                 printf("\r");
@@ -152,7 +157,7 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
             AIFCflag = 1;
         else
         {
-            printf("this is an unknown AIFx\r");
+            //            printf("this is an unknown AIFx\r");
             return -1;
         }
         
@@ -163,15 +168,14 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
             //the version header
             if (strncmp((char *)WavTemp, "FVER", 4) == 0)
             {
-                //                printf("in FVER\r");
                 aChunk = malloc(n);
                 fread(aChunk, 1, n, inputfile);
                 n = (unsigned int)aChunk[0]<<24 | (unsigned int)aChunk[1]<<16 | (unsigned int)aChunk[2]<<8 | (unsigned int)aChunk[3];
                 if (n != 0xA2805140)
                 {
-                    printf("wrong version of AIFC\r");
+                    //                   printf("wrong version of AIFC\r");
                     free(aChunk);
-                    return -1;
+                    return -2;
                 }
                 free(aChunk);
             }
@@ -199,9 +203,9 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
                         *isfloat = 1;
                     else
                     {
-                        printf("neither PCM-int or FL32 AIFC\r");
+                        //                       printf("neither PCM-int or FL32 AIFC\r");
                         free(aChunk);
-                        return -1;
+                        return -3;
                     }
                 }
                 
@@ -222,8 +226,8 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
         }
         if (!frames)
         {
-            printf("no data\r");
-            return -1;
+            //           printf("no data\r");
+            return -4;
         }
     }
     // OR checks the file is a legit WAV and process
@@ -235,14 +239,14 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
             *isbigendian = 1;//the very rare RIFX files
         else
         {
-            printf("NoWAVE-at-all\r");
-            return -1;
+            //            printf("NoWAVE-at-all\r");
+            return -5;
         }
         
         if (strncmp((char *)FileHead+8, "WAVE", 4))
         {
-            printf("NoWAVE\r");
-            return -1;
+            //            printf("NoWAVE\r");
+            return -6;
         }
         
         // check the different parameters
@@ -252,8 +256,8 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
         //check proper header
         if (strncmp((char *)WavTemp, "fmt ", 4))
         {
-            printf("NoFMT\r");
-            return -1;
+            //            printf("NoFMT\r");
+            return -7;
         }
         
         n = (unsigned int)WavTemp[7]<<24 | (unsigned int)WavTemp[6]<<16 | (unsigned int)WavTemp[5]<<8 | (unsigned int)WavTemp[4];
@@ -280,8 +284,8 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
                 *isfloat = 1;
             else
             {
-                printf("NoINTofFLOAT\r");
-                return -1;
+                //                printf("NoINTofFLOAT\r");
+                return -8;
             }
             
             while(fread(WavTemp, 1, 8, inputfile))
@@ -300,23 +304,23 @@ long audiofile_header_extractor(FILE *inputfile, float *SR, unsigned int *nbchan
             
             if (!frames)
             {
-                printf("no data\r");
-                return -1;
+                //                printf("no data\r");
+                return -9;
             }
             
         }
         else
         {
-            printf("NoPCM\r");
+            //            printf("NoPCM\r");
             free(aChunk);
-            return -1;
+            return -8;
         }
     }
     else
     {
         // OR discarts
-        printf("Not a supported filetype\r");
-        return -1;
+        //        printf("Not a supported filetype\r");
+        return -10;
     }
     return index;
 }
