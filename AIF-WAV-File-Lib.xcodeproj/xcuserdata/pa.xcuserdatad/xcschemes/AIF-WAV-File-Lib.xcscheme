@@ -72,7 +72,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/stereonoise.aiff"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/bluesy.wav"
@@ -80,7 +80,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp.wav"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp32.wav"
