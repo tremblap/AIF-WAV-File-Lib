@@ -59,51 +59,31 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/pa/Desktop/ramp32.wav"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/bluesywavGAIN.aiff"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/pa/Desktop/stereo-ramps.wav"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp.aif"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/pa/Desktop/bluesy.wav"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp32.aif"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/machins/--a&#x300;\ archiver/de&#x301;marche/soprano+electro/performance_patch/Audio/groove1-bd-Q.wav"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Volumes/machins/--a&#x300;\ archiver/de&#x301;marche/soprano+electro/performance_patch/Corrections/Corr-C.wav"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Users/pa/Desktop/ramp.aif"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Users/pa/Desktop/ramp32.aif"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/stereonoise.aiff"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/machins/essai\ e&#x301;lectro/stereo\ tone"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/bluesy.wav"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/pa/Desktop/stereonoise.aiff"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp.wav"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/pa/Desktop/bluesywavGAIN.aiff"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Volumes/trucs/archive\ -\ pie&#x300;ces\ PA/-reflets/mastering5.1final/wtwtt-audio-5.1.aiff"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Volumes/trucs/archive\ -\ instruments\ PA/sandbox#3/patch-test/chroma-synthbass.aif"
+            argument = "/Volumes/machins/essai_C/AIF-WAV-File-Lib/audio-tests/ramp32.wav"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

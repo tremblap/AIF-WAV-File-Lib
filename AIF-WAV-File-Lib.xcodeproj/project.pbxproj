@@ -31,6 +31,7 @@
 		0F85315E1A29F15D0027FE3B /* AIF-WAV-File-Lib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "AIF-WAV-File-Lib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F8531611A29F15D0027FE3B /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		0F8531631A29F15D0027FE3B /* AIF_WAV_File_Lib.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = AIF_WAV_File_Lib.1; sourceTree = "<group>"; };
+		0FC6D3CE1A2F278400D3E866 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +68,7 @@
 				0F8531631A29F15D0027FE3B /* AIF_WAV_File_Lib.1 */,
 				0F690F8B1A2A84AC00F16E82 /* extended.c */,
 				0F690F8D1A2A85C100F16E82 /* extended.h */,
+				0FC6D3CE1A2F278400D3E866 /* LICENSE.txt */,
 			);
 			path = "AIF-WAV-File-Lib";
 			sourceTree = "<group>";

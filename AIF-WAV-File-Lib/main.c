@@ -2,9 +2,9 @@
 //  main.c
 //  AIF-WAV-File-Lib
 //
-//  Created by Pierre Alexandre Tremblay on 29/11/14.
-//  Copyright (c) 2014 Pierre Alexandre Tremblay. All rights reserved.
-//
+//The audiofile_header_extractor function
+//Copyright (c) 2014 Pierre Alexandre Tremblay
+//All rights reserved.
 
 #include <stdio.h>
 #include <string.h>
